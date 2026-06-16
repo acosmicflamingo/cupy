@@ -1041,6 +1041,15 @@ def for_complex_dtypes(name='dtype'):
     return for_dtypes(_complex_dtypes, name=name)
 
 
+def for_complex_dtypes_pytest(name='dtype'):
+    import pytest
+    return pytest.mark.parametrize(
+        name,
+        _complex_dtypes,
+        ids=lambda x: numpy.dtype(x).name,
+    )
+
+
 def for_dtypes_combination(types, names=('dtype',), full=None):
     """Decorator that checks the fixture with a product set of dtypes.
 

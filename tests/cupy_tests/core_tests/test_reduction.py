@@ -96,19 +96,17 @@ class TestSimpleReductionFunctionNonContiguous(
         self.check_int8_sum(self.shape, trans=self.trans, axis=self.axis)
 
 
-@testing.parameterize(*testing.product({
-    'backend': ([], ['cub']),
-}))
-class TestSimpleReductionFunctionComplexWarning(unittest.TestCase):
+@pytest.mark.parametrize("backend", ([], ["cub"]))
+class TestSimpleReductionFunctionComplexWarning:
 
-    def setUp(self):
+    @pytest.fixture(autouse=True)
+    def configure(self, backend):
         self.accelerators = _core.get_reduction_accelerators()
-        _core.set_reduction_accelerators(self.backend)
-
-    def tearDown(self):
+        _core.set_reduction_accelerators(backend)
+        yield
         _core.set_reduction_accelerators(self.accelerators)
 
-    @testing.for_complex_dtypes(name='c_dtype')
+    @testing.for_complex_dtypes_pytest(name='c_dtype')
     @testing.for_float_dtypes(name='f_dtype')
     @testing.numpy_cupy_allclose()
     def test_warns(self, xp, c_dtype, f_dtype):
